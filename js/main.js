@@ -34,10 +34,10 @@ function create() {
 
     this.scale.updateLayout(true);
 
-    game.stage.backgroundColor = '#FBFCFF';
+    game.stage.backgroundColor = '#E5DCC5';
     sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
     sprite.anchor.setTo(0.5);
-    var scale = Math.min(game.world.width, game.world.height) * .08 / 52;
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     //sprite.width = game.world.width * .08
     //sprite.scale.y = sprite.scale.x;
     sprite.scale.setTo(scale, scale);
@@ -48,7 +48,7 @@ function create() {
 
     game.input.onDown.addOnce(summonEnemies, this);
 
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 32 * scale, fill: '#274156'})
+    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 100 * scale, fill: '#C14953'})
 
 }
 
@@ -61,46 +61,48 @@ function createEnemy() {
     rand *= 4;
     rand = Math.floor(rand);
 
-    var scale = Math.min(game.world.width, game.world.height) * .08 / 52;
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
 
     if (rand == 0) {
         var enemy = enemies.create(-42, game.world.randomY, 'enemy');
         //enemy.width = game.world.width * .08
         //enemy.scale.y = enemy.scale.x;
         game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.velocity.x = 250 * scale;
-        enemy.body.velocity.y = (Math.random() * 2 - 1) * 250 * scale;
+        enemy.body.velocity.x = 500 * scale;
+        enemy.body.velocity.y = (Math.random() * 2 - 1) * 300 * scale;
 
     }
     else if (rand == 1) {
         var enemy = enemies.create(game.world.width + 42, game.world.randomY, 'enemy');
         game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.velocity.x = -250 * scale;
+        enemy.body.velocity.x = -500 * scale;
         ;
-        enemy.body.velocity.y = (Math.random() * 2 - 1) * 250 * scale;
+        enemy.body.velocity.y = (Math.random() * 2 - 1) * 300 * scale;
 
 
     }
     else if (rand == 2) {
         var enemy = enemies.create(game.world.randomX, -42, 'enemy');
         game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.velocity.y = 250 * scale;
-        enemy.body.velocity.x = (Math.random() * 2 - 1) * 250 * scale;
+        enemy.body.velocity.y = 500 * scale;
+        enemy.body.velocity.x = (Math.random() * 2 - 1) * 300 * scale;
 
     }
     else if (rand == 3) {
         var enemy = enemies.create(game.world.randomX, game.world.height + 42, 'enemy');
         game.physics.enable(enemy, Phaser.Physics.ARCADE);
-        enemy.body.velocity.y = -250 * scale;
-        enemy.body.velocity.x = (Math.random() * 2 - 1) * 250 * scale;
+        enemy.body.velocity.y = -500 * scale;
+        enemy.body.velocity.x = (Math.random() * 2 - 1) * 300 * scale;
     }
     enemy.scale.setTo(scale, scale);
     score += 1;
     scoreText.text = 'score: ' + score;
+    enemy.events.onOutOfBounds.add( goodbye, this );
+
 }
 
 function update() {
-    var scale = Math.min(game.world.width, game.world.height) * .08 / 52;
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     //  only move when you click
     if (game.input.pointer1.isDown || game.input.mousePointer.isDown)
     {
@@ -114,7 +116,7 @@ function update() {
         else
         {
             //  400 is the speed it will move towards the mouse
-            game.physics.arcade.moveToPointer(sprite, 400 * scale);
+            game.physics.arcade.moveToPointer(sprite, 800 * scale);
         }
     }
     else
@@ -124,14 +126,20 @@ function update() {
 
     game.physics.arcade.overlap(sprite, enemies, gameOver, null, this);
 
+
+
+}
+
+function goodbye(obj) {
+    obj.kill();
 }
 
 function gameOver() {
 
-    var scale = Math.min(game.world.width, game.world.height) * .08 / 52;
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     scoreText.destroy();
     scoreText = game.add.text(game.world.centerX, game.world.centerY,
-        'Score:' + score + '\nGame Over!\nTap to Restart', { fontSize: 32 * scale,align: 'center', fill: '#274156',});
+        'Score:' + score + '\nGame Over!\nTap to Restart', { fontSize: 100 * scale,align: 'center', fill: '#C14953',});
     scoreText.x = game.world.centerX - scoreText.width/2
     scoreText.y = game.world.centerY - scoreText.height/2
 
@@ -143,11 +151,11 @@ function gameOver() {
 }
 
 function restart() {
-    var scale = Math.min(game.world.width, game.world.height) * .08 / 52;
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
 
     scoreText.destroy();
     score = 0;
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 32 * scale, fill: '#274156'});
+    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 100 * scale, fill: '#C14953'});
 
     sprite.revive();
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 200, createEnemy, this);
