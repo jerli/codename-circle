@@ -34,6 +34,8 @@ function create() {
 
     this.scale.updateLayout(true);
 
+    this.scale.refresh();
+
     game.stage.backgroundColor = '#E5DCC5';
     sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
     sprite.anchor.setTo(0.5);
@@ -139,11 +141,12 @@ function gameOver() {
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     scoreText.destroy();
     scoreText = game.add.text(game.world.centerX, game.world.centerY,
-        'Score:' + score + '\nGame Over!\nTap to Restart', { fontSize: 100 * scale,align: 'center', fill: '#C14953',});
-    scoreText.x = game.world.centerX - scoreText.width/2
-    scoreText.y = game.world.centerY - scoreText.height/2
+        'Score:' + score + '\nGame Over!\nTap to Restart', { fontSize: 100 * scale,align: 'center', fill: '#C14953'});
+    scoreText.x = game.world.centerX - scoreText.width/2;
+    scoreText.y = game.world.centerY - scoreText.height/2;
 
     sprite.kill();
+    enemies.destroy();
     this.game.time.removeAll();
 
     game.input.onDown.addOnce(restart, this);
@@ -158,7 +161,10 @@ function restart() {
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 100 * scale, fill: '#C14953'});
 
     sprite.revive();
-    game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 200, createEnemy, this);
+    enemies = game.add.group();
+    enemies.enableBody = true;
+
+    game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
 
 
 }
