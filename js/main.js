@@ -66,9 +66,9 @@ function create() {
 
     game.input.onDown.addOnce(summonEnemies, this);
 
-    scoreText = game.add.text(0.02*game.world.width, 0.02*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    scoreText = game.add.text(0.03*game.world.width, 0.03*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
     if (localStorage.highScore) {
-        hsText =  game.add.text(0.02*game.world.width, 0.022*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+        hsText =  game.add.text(0.03*game.world.width, 0.033*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
             { fontSize: 70 * scale, fill: '#EDE6E3'});
     }
     else {
@@ -86,7 +86,7 @@ function create() {
 
     introBox = game.add.graphics(0, 0);
     introBox.lineStyle(scale*4, 0xEDE6E3, 1);
-    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.91/5,
+    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.95/5,
         introText.width*1.15, introText.height*1.3, 1.5);
     introBox.alpha = 0;
 
@@ -216,7 +216,7 @@ function gameOver() {
     graphics = game.add.graphics(0, 0);
     graphics.lineStyle(scale*4, 0xEDE6E3, 1);
     graphics.drawRoundedRect(game.world.centerX - scoreText.width*1.1/2, game.world.centerY - scoreText.height*1.1/2,
-        scoreText.width*1.1, scoreText.height*1.2, 1.5);
+        scoreText.width*1.2, scoreText.height*1.2, 1.5);
     graphics.alpha = 0;
     scoreText.alpha = 0;
 
@@ -240,11 +240,15 @@ function restart() {
     graphics.kill();
     scoreText.destroy();
     score = 0;
-    scoreText = game.add.text(0.02*game.world.width, 0.02*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
-    hsText =  game.add.text(0.02*game.world.width, 0.022*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+    scoreText = game.add.text(0.03*game.world.width, 0.03*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    hsText =  game.add.text(0.03*game.world.width, 0.033*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
         { fontSize: 70 * scale, fill: '#EDE6E3'});
     hsText.font = 'quicksandlight';
     scoreText.font = 'quicksandlight';
+    graphics = game.add.graphics(0, 0);
+    graphics.lineStyle(scale*4, 0xEDE6E3, 1);
+    graphics.drawRoundedRect(0.01*game.world.width, 0.01*game.world.width,
+        hsText.width*1.2, scoreText.height*2.6, 1.5);
 
 
     sprite.revive();
