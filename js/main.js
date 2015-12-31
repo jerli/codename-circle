@@ -11,6 +11,8 @@ function preload() {
 
     game.load.image('ball', 'assets/sprites/ball.png');
     game.load.image('enemy', 'assets/sprites/enemy.png');
+    game.load.audio('club_thump', ['assets/audio/club_thump.ogg']);
+
 
 }
 
@@ -20,6 +22,9 @@ var scoreText;
 var hsText;
 var introText;
 var enemies;
+var music;
+var graphics;
+var introBox;
 
 function create() {
 
@@ -39,7 +44,7 @@ function create() {
 
     this.scale.refresh();
 
-    game.stage.backgroundColor = '#36382Ef';
+    game.stage.backgroundColor = '#36382E';
     sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
     sprite.anchor.setTo(0.5);
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
@@ -48,6 +53,8 @@ function create() {
     sprite.scale.setTo(scale, scale);
     game.physics.enable(sprite, Phaser.Physics.ARCADE);
 
+    music = game.add.audio('club_thump');
+    music.loop = true;
     enemies = game.add.group();
     enemies.enableBody = true;
 
@@ -72,15 +79,32 @@ function create() {
     hsText.font = 'quicksandlight';
     scoreText.font = 'quicksandlight';
 
+    graphics = game.add.graphics(0, 0);
+    graphics.lineStyle(scale*4, 0xEDE6E3, 1);
+    graphics.drawRoundedRect(0.01*game.world.width, 0.01*game.world.width,
+        hsText.width*1.2, scoreText.height*2.6, 1.5);
+
+    introBox = game.add.graphics(0, 0);
+    introBox.lineStyle(scale*4, 0xEDE6E3, 1);
+    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.91/5,
+        introText.width*1.15, introText.height*1.3, 1.5);
+    introBox.alpha = 0;
+
+    s = this.game.add.tween(introBox);
+
 
     introText.alpha = 0;
     game.add.tween(introText).to( { alpha: 1 }, 1000, "Linear", true);
+    s.to({ alpha: 1 }, 1000, "Linear", true);
 
     }
 
 function summonEnemies() {
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
     introText.destroy();
+    introBox.kill();
+    music.play();
+    music.loop = true;
 }
 
 function createEnemy() {
@@ -179,7 +203,7 @@ function goodbye(obj) {
 }
 
 function gameOver() {
-
+    graphics.kill();
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     scoreText.destroy();
     hsText.destroy();
@@ -189,13 +213,22 @@ function gameOver() {
     scoreText.y = game.world.centerY - scoreText.height/2;
     scoreText.font = 'quicksandlight';
 
+    graphics = game.add.graphics(0, 0);
+    graphics.lineStyle(scale*4, 0xEDE6E3, 1);
+    graphics.drawRoundedRect(game.world.centerX - scoreText.width*1.1/2, game.world.centerY - scoreText.height*1.1/2,
+        scoreText.width*1.1, scoreText.height*1.2, 1.5);
+    graphics.alpha = 0;
     scoreText.alpha = 0;
-    game.add.tween(scoreText).to( { alpha: 1 }, 1000, "Linear", true);
 
+    s = this.game.add.tween(graphics);
+
+    game.add.tween(scoreText).to( { alpha: 1 }, 1000, "Linear", true);
+    s.to({ alpha: 1 }, 1000, "Linear", true);
 
     sprite.kill();
     enemies.destroy();
     this.game.time.removeAll();
+
 
     game.input.onDown.addOnce(restart, this);
 
@@ -204,6 +237,7 @@ function gameOver() {
 function restart() {
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
 
+    graphics.kill();
     scoreText.destroy();
     score = 0;
     scoreText = game.add.text(0.02*game.world.width, 0.02*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
