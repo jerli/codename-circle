@@ -17,6 +17,9 @@ function preload() {
 var sprite;
 var score = 0;
 var scoreText;
+var hsText;
+var introText;
+var enemies;
 
 function create() {
 
