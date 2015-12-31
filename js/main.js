@@ -36,7 +36,7 @@ function create() {
 
     this.scale.refresh();
 
-    game.stage.backgroundColor = '#E5DCC5';
+    game.stage.backgroundColor = '#36382Ef';
     sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
     sprite.anchor.setTo(0.5);
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
@@ -48,14 +48,36 @@ function create() {
     enemies = game.add.group();
     enemies.enableBody = true;
 
+    introText = game.add.text(game.world.centerX, game.world.height / 5, "welcome!\ntouch to begin",
+        { fontSize: 70 * scale, align: 'center', fill: '#EDE6E3'});
+    introText.x = game.world.centerX - introText.width/2;
+    introText.font = 'quicksandlight';
+
+
     game.input.onDown.addOnce(summonEnemies, this);
 
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 100 * scale, fill: '#C14953'})
+    scoreText = game.add.text(0.02*game.world.width, 0.02*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    if (localStorage.highScore) {
+        hsText =  game.add.text(0.02*game.world.width, 0.022*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+            { fontSize: 70 * scale, fill: '#EDE6E3'});
+    }
+    else {
+        hsText = game.add.text(game.world.width - scoreText.width * 1.7, 16, 'top score: 0',
+            { fontSize: 70 * scale, fill: '#EDE6E3'});
+        var highScore = 0;
+    }
+    hsText.font = 'quicksandlight';
+    scoreText.font = 'quicksandlight';
 
-}
+
+    introText.alpha = 0;
+    game.add.tween(introText).to( { alpha: 1 }, 1000, "Linear", true);
+
+    }
 
 function summonEnemies() {
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
+    introText.destroy();
 }
 
 function createEnemy() {
@@ -98,8 +120,26 @@ function createEnemy() {
     }
     enemy.scale.setTo(scale, scale);
     score += 1;
+
     scoreText.text = 'score: ' + score;
     enemy.events.onOutOfBounds.add( goodbye, this );
+
+    if (this.game.device.localStorage) {
+        if (localStorage.highScore) {
+            if (score > localStorage.highScore) {
+                localStorage.highScore = score;
+                hsText.text = 'top score:' + localStorage.highScore;
+            }
+        }
+        else {
+            localStorage.highScore = score;
+        }
+    }
+    else if (score >= highScore) {
+        highScore = score
+        hsText.text = 'top score:' + highScore;
+    }
+
 
 }
 
@@ -129,7 +169,6 @@ function update() {
     game.physics.arcade.overlap(sprite, enemies, gameOver, null, this);
 
 
-
 }
 
 function goodbye(obj) {
@@ -140,10 +179,16 @@ function gameOver() {
 
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     scoreText.destroy();
+    hsText.destroy();
     scoreText = game.add.text(game.world.centerX, game.world.centerY,
-        'Score:' + score + '\nGame Over!\nTap to Restart', { fontSize: 100 * scale,align: 'center', fill: '#C14953'});
+        'score:' + score + '\ntop score:' + localStorage.highScore + '\n\ngame over!\ntap to restart', { fontSize: 70 * scale,align: 'center', fill: '#EDE6E3'});
     scoreText.x = game.world.centerX - scoreText.width/2;
     scoreText.y = game.world.centerY - scoreText.height/2;
+    scoreText.font = 'quicksandlight';
+
+    scoreText.alpha = 0;
+    game.add.tween(scoreText).to( { alpha: 1 }, 1000, "Linear", true);
+
 
     sprite.kill();
     enemies.destroy();
@@ -158,12 +203,16 @@ function restart() {
 
     scoreText.destroy();
     score = 0;
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: 100 * scale, fill: '#C14953'});
+    scoreText = game.add.text(0.02*game.world.width, 0.02*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    hsText =  game.add.text(0.02*game.world.width, 0.022*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+        { fontSize: 70 * scale, fill: '#EDE6E3'});
+    hsText.font = 'quicksandlight';
+    scoreText.font = 'quicksandlight';
+
 
     sprite.revive();
     enemies = game.add.group();
     enemies.enableBody = true;
-
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
 
 
