@@ -6,9 +6,7 @@
     "projectFiles": {},
     "projectDirectories": {},
     "currentService": {
-      "methodapi": "Info",
-      "endPoint": "AdMob",
-      "service": "AdMob"
+      "service": "github"
     }
   }
 }

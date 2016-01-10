@@ -11,7 +11,7 @@ function preload() {
 
     game.load.image('ball', 'assets/sprites/ball.png');
     game.load.image('enemy', 'assets/sprites/enemy.png');
-    game.load.audio('club_thump', ['assets/audio/club_thump.ogg']);
+    game.load.audio('club_thump', ['assets/audio/club_thump.mp3']);
 
 
 }
@@ -25,6 +25,7 @@ var enemies;
 var music;
 var graphics;
 var introBox;
+var edge;
 
 function create() {
 
@@ -47,6 +48,7 @@ function create() {
     game.stage.backgroundColor = '#36382E';
     sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
     sprite.anchor.setTo(0.5);
+    edge = Math.min(game.world.width, game.world.height);
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     //sprite.width = game.world.width * .08
     //sprite.scale.y = sprite.scale.x;
@@ -58,7 +60,7 @@ function create() {
     enemies = game.add.group();
     enemies.enableBody = true;
 
-    introText = game.add.text(game.world.centerX, game.world.height / 5, "welcome!\ntouch to begin",
+    introText = game.add.text(game.world.centerX, game.world.height / 4, "welcome!\ntouch to begin",
         { fontSize: 70 * scale, align: 'center', fill: '#EDE6E3'});
     introText.x = game.world.centerX - introText.width/2;
     introText.font = 'quicksandlight';
@@ -66,13 +68,13 @@ function create() {
 
     game.input.onDown.addOnce(summonEnemies, this);
 
-    scoreText = game.add.text(0.03*game.world.width, 0.03*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    scoreText = game.add.text(0.03*edge, 0.03*edge, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
     if (localStorage.highScore) {
-        hsText =  game.add.text(0.03*game.world.width, 0.033*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+        hsText =  game.add.text(0.03*edge, 0.033*edge + scoreText.height, 'top score: ' + localStorage.highScore,
             { fontSize: 70 * scale, fill: '#EDE6E3'});
     }
     else {
-        hsText = game.add.text(game.world.width - scoreText.width * 1.7, 16, 'top score: 0',
+        hsText = game.add.text(0.03*edge, 0.033*edge + scoreText.height, 'top score: 0',
             { fontSize: 70 * scale, fill: '#EDE6E3'});
         var highScore = 0;
     }
@@ -81,12 +83,12 @@ function create() {
 
     graphics = game.add.graphics(0, 0);
     graphics.lineStyle(scale*4, 0xEDE6E3, 1);
-    graphics.drawRoundedRect(0.01*game.world.width, 0.01*game.world.width,
-        hsText.width*1.2, scoreText.height*2.6, 1.5);
+    graphics.drawRoundedRect(0.01*edge, 0.01*edge,
+        hsText.width*1.2, scoreText.height*2 + 0.05 * edge, 1.5);
 
     introBox = game.add.graphics(0, 0);
     introBox.lineStyle(scale*4, 0xEDE6E3, 1);
-    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.95/5,
+    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.95/4,
         introText.width*1.15, introText.height*1.3, 1.5);
     introBox.alpha = 0;
 
@@ -155,7 +157,7 @@ function createEnemy() {
         if (localStorage.highScore) {
             if (score > localStorage.highScore) {
                 localStorage.highScore = score;
-                hsText.text = 'top score:' + localStorage.highScore;
+                hsText.text = 'top score: ' + localStorage.highScore;
             }
         }
         else {
@@ -164,7 +166,7 @@ function createEnemy() {
     }
     else if (score >= highScore) {
         highScore = score
-        hsText.text = 'top score:' + highScore;
+        hsText.text = 'top score: ' + highScore;
     }
 
 
@@ -208,15 +210,15 @@ function gameOver() {
     scoreText.destroy();
     hsText.destroy();
     scoreText = game.add.text(game.world.centerX, game.world.centerY,
-        'score:' + score + '\ntop score:' + localStorage.highScore + '\n\ngame over!\ntap to restart', { fontSize: 70 * scale,align: 'center', fill: '#EDE6E3'});
+        'score: ' + score + '\ntop score: ' + localStorage.highScore + '\n\ngame over!\ntap to restart', { fontSize: 70 * scale,align: 'center', fill: '#EDE6E3'});
     scoreText.x = game.world.centerX - scoreText.width/2;
     scoreText.y = game.world.centerY - scoreText.height/2;
     scoreText.font = 'quicksandlight';
 
     graphics = game.add.graphics(0, 0);
     graphics.lineStyle(scale*4, 0xEDE6E3, 1);
-    graphics.drawRoundedRect(game.world.centerX - scoreText.width*1.1/2, game.world.centerY - scoreText.height*1.1/2,
-        scoreText.width*1.2, scoreText.height*1.2, 1.5);
+    graphics.drawRoundedRect(game.world.centerX - scoreText.width*1.1/2, game.world.centerY - scoreText.height*1.2/2,
+        scoreText.width*1.1, scoreText.height*1.25, 1.5);
     graphics.alpha = 0;
     scoreText.alpha = 0;
 
@@ -240,14 +242,14 @@ function restart() {
     graphics.kill();
     scoreText.destroy();
     score = 0;
-    scoreText = game.add.text(0.03*game.world.width, 0.03*game.world.width, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
-    hsText =  game.add.text(0.03*game.world.width, 0.033*game.world.width + scoreText.height, 'top score:' + localStorage.highScore,
+    scoreText = game.add.text(0.03*edge, 0.03*edge, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
+    hsText =  game.add.text(0.03*edge, 0.033*edge + scoreText.height, 'top score: ' + localStorage.highScore,
         { fontSize: 70 * scale, fill: '#EDE6E3'});
     hsText.font = 'quicksandlight';
     scoreText.font = 'quicksandlight';
     graphics = game.add.graphics(0, 0);
     graphics.lineStyle(scale*4, 0xEDE6E3, 1);
-    graphics.drawRoundedRect(0.01*game.world.width, 0.01*game.world.width,
+    graphics.drawRoundedRect(0.01*edge, 0.01*edge,
         hsText.width*1.2, scoreText.height*2.6, 1.5);
 
 
