@@ -6,7 +6,9 @@
     "projectFiles": {},
     "projectDirectories": {},
     "currentService": {
-      "service": "github"
+      "methodapi": "trackPageView",
+      "endPoint": "Tracking",
+      "service": "google_analytics"
     }
   }
 }

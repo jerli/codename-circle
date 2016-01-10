@@ -11,7 +11,7 @@ function preload() {
 
     game.load.image('ball', 'assets/sprites/ball.png');
     game.load.image('enemy', 'assets/sprites/enemy.png');
-    game.load.audio('club_thump', ['assets/audio/club_thump.mp3']);
+    game.load.audio('club_thump', ['assets/audio/club_thump.ogg']);
 
 
 }
@@ -54,9 +54,13 @@ function create() {
     //sprite.scale.y = sprite.scale.x;
     sprite.scale.setTo(scale, scale);
     game.physics.enable(sprite, Phaser.Physics.ARCADE);
+    sprite.body.setSize(0.85 * sprite.width, 0.85 * sprite.width, 0.075*sprite.width, 0.075*sprite.width);
+
 
     music = game.add.audio('club_thump');
     music.loop = true;
+    music.play();
+    music.mute = true;
     enemies = game.add.group();
     enemies.enableBody = true;
 
@@ -88,8 +92,8 @@ function create() {
 
     introBox = game.add.graphics(0, 0);
     introBox.lineStyle(scale*4, 0xEDE6E3, 1);
-    introBox.drawRoundedRect(game.world.centerX - introText.width*1.1/2, game.world.height * 0.95/4,
-        introText.width*1.15, introText.height*1.3, 1.5);
+    introBox.drawRoundedRect(game.world.centerX - introText.width/2, game.world.height * 0.95/4,
+        introText.width*1.1, introText.height*1.3, 1.5);
     introBox.alpha = 0;
 
     s = this.game.add.tween(introBox);
@@ -105,8 +109,10 @@ function summonEnemies() {
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
     introText.destroy();
     introBox.kill();
-    music.play();
+    music.mute = false;
+    music.fadeIn(2000);
     music.loop = true;
+
 }
 
 function createEnemy() {
@@ -206,6 +212,7 @@ function goodbye(obj) {
 
 function gameOver() {
     graphics.kill();
+    music.fadeOut(200);
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     scoreText.destroy();
     hsText.destroy();
@@ -217,8 +224,8 @@ function gameOver() {
 
     graphics = game.add.graphics(0, 0);
     graphics.lineStyle(scale*4, 0xEDE6E3, 1);
-    graphics.drawRoundedRect(game.world.centerX - scoreText.width*1.1/2, game.world.centerY - scoreText.height*1.2/2,
-        scoreText.width*1.1, scoreText.height*1.25, 1.5);
+    graphics.drawRoundedRect(game.world.centerX - scoreText.width/2, game.world.centerY - scoreText.height*1.2/2,
+        scoreText.width* 1.1, scoreText.height*1.25, 1.5);
     graphics.alpha = 0;
     scoreText.alpha = 0;
 
@@ -257,6 +264,8 @@ function restart() {
     enemies = game.add.group();
     enemies.enableBody = true;
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
+    music.fadeIn(2000);
+    music.loop = true;
 
 
 }
