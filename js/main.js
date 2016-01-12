@@ -26,6 +26,7 @@ var music;
 var graphics;
 var introBox;
 var edge;
+var logo;
 
 function create() {
 
@@ -46,16 +47,10 @@ function create() {
     this.scale.refresh();
 
     game.stage.backgroundColor = '#36382E';
-    sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
-    sprite.anchor.setTo(0.5);
     edge = Math.min(game.world.width, game.world.height);
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     //sprite.width = game.world.width * .08
     //sprite.scale.y = sprite.scale.x;
-    sprite.scale.setTo(scale, scale);
-    game.physics.enable(sprite, Phaser.Physics.ARCADE);
-    sprite.body.setSize(0.85 * sprite.width, 0.85 * sprite.width, 0.075*sprite.width, 0.075*sprite.width);
-
 
     music = game.add.audio('club_thump');
     music.loop = true;
@@ -69,8 +64,6 @@ function create() {
     introText.x = game.world.centerX - introText.width/2;
     introText.font = 'quicksandlight';
 
-
-    game.input.onDown.addOnce(summonEnemies, this);
 
     scoreText = game.add.text(0.03*edge, 0.03*edge, 'score: 0', { fontSize: 70 * scale, fill: '#EDE6E3'});
     if (localStorage.highScore) {
@@ -97,6 +90,7 @@ function create() {
     introBox.alpha = 0;
 
     s = this.game.add.tween(introBox);
+    s.onComplete.add(onComplete, this);
 
 
     introText.alpha = 0;
@@ -104,6 +98,22 @@ function create() {
     s.to({ alpha: 1 }, 1000, "Linear", true);
 
     }
+
+function onComplete() {
+
+    sprite = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
+    sprite.anchor.setTo(0.5);
+    edge = Math.min(game.world.width, game.world.height);
+
+    var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
+    sprite.scale.setTo(scale, scale);
+    game.physics.enable(sprite, Phaser.Physics.ARCADE);
+    sprite.body.setSize(0.85 * sprite.width, 0.85 * sprite.width, 0.075*sprite.width, 0.075*sprite.width);
+    sprite.alpha = 0;
+    b = this.game.add.tween(sprite);
+    b.to({ alpha: 1 }, 1000, "Linear", true);
+    game.input.onDown.addOnce(summonEnemies, this);
+}
 
 function summonEnemies() {
     game.time.events.repeat(Phaser.Timer.SECOND * 0.3, 5000, createEnemy, this);
@@ -181,26 +191,23 @@ function createEnemy() {
 function update() {
     var scale = Math.min(game.world.width, game.world.height) * .1 / 128;
     //  only move when you click
-    if (game.input.pointer1.isDown || game.input.mousePointer.isDown)
-    {
+    if (sprite) {
+        if (game.input.pointer1.isDown || game.input.mousePointer.isDown) {
 
 
-        //  if it's overlapping the mouse, don't move any more
-        if (Phaser.Rectangle.contains(sprite.body, game.input.x, game.input.y))
-        {
+            //  if it's overlapping the mouse, don't move any more
+            if (Phaser.Rectangle.contains(sprite.body, game.input.x, game.input.y)) {
+                sprite.body.velocity.setTo(0, 0);
+            }
+            else {
+                //  400 is the speed it will move towards the mouse
+                game.physics.arcade.moveToPointer(sprite, 800 * scale);
+            }
+        }
+        else {
             sprite.body.velocity.setTo(0, 0);
         }
-        else
-        {
-            //  400 is the speed it will move towards the mouse
-            game.physics.arcade.moveToPointer(sprite, 800 * scale);
-        }
     }
-    else
-    {
-        sprite.body.velocity.setTo(0, 0);
-    }
-
     game.physics.arcade.overlap(sprite, enemies, gameOver, null, this);
 
 

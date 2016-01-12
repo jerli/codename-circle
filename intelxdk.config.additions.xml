@@ -2,3 +2,6 @@
 <!-- Crosswalk apps on Android 4.0+ devices and Cordova apps on Android 4.4+ devices. -->
 <preference name="debuggable" value="false" />
 <!-- IMPORTANT: set the debuggable preference to false before you build for the store! -->
+<intelxdk:plugin intelxdk:name="googleplaygameservices" intelxdk:value="http://...">
+    <intelxdk:param intelxdk:name="GPSAPPID" intelxdk:value="_APPID_" />
+</intelxdk:plugin>

@@ -6,9 +6,7 @@
     "projectFiles": {},
     "projectDirectories": {},
     "currentService": {
-      "methodapi": "trackPageView",
-      "endPoint": "Tracking",
-      "service": "google_analytics"
+      "service": "appmobi"
     }
   }
 }
